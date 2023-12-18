@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "network-service-package",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sofoetno/network-service-package",
+      "state" : {
+        "branch" : "main",
+        "revision" : "14fa19c5dab5915822558edb64e58ddcdaea8b48"
+      }
+    }
+  ],
+  "version" : 2
+}
