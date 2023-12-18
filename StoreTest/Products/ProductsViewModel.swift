@@ -34,7 +34,9 @@ class ProductsViewModel: ObservableObject {
             do {
                 let urlString = category == nil ? "https://dummyjson.com/products" : "https://dummyjson.com/products/category/\(category ?? "")"
                 if let productsData: ProductsData = try await NetworkService.shared.getData(fromUrl: urlString) {
-                    self.products = productsData.products
+                    await MainActor.run {
+                        self.products = productsData.products
+                    }
                 }
             } catch {
                 print(error)
@@ -61,26 +63,34 @@ class ProductsViewModel: ObservableObject {
     }
     
     func checkout() async throws {
-        checkoutInProgress = true
+        await MainActor.run {
+            checkoutInProgress = true
+        }
         
         let quantity = calculateQuantity()
         
         if quantity == 0 {
-            checkoutInProgress = false
+            await MainActor.run {
+                checkoutInProgress = false
+            }
             throw CheckoutError.emptyCart
         }
         
         let totalPrice = calculateSubtotalPrice()
         
         if totalPrice > balance {
-            checkoutInProgress = false
+            await MainActor.run {
+                checkoutInProgress = false
+            }
             throw CheckoutError.insufficient
         }
         
         try await Task.sleep(nanoseconds: 3000000000)
-        
-        balance -= totalPrice
-        removeAll()
-        checkoutInProgress = false
+        await MainActor.run {
+            balance -= totalPrice
+            removeAll()
+            checkoutInProgress = false
+        }
+       
     }
 }
